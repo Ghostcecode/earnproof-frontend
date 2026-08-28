@@ -120,6 +120,11 @@ npm run build
 npm audit --omit=dev
 ```
 
+## Cache Policy
+
+Cache-Control policy by route, API response caching, and stale/offline
+UI behavior are documented in [docs/cache-policy.md](docs/cache-policy.md).
+
 ## Privacy and UX Requirements
 
 - Show Stellar testnet status on relevant screens.

@@ -53,8 +53,11 @@ export default function StatusPage() {
     error,
     lastChecked,
     lastUpdated,
+    isDataLive,
     refetch,
   } = useHealthCheck();
+
+  const showingCachedData = data !== null && !isDataLive;
 
   const isOperational =
     data !== null &&
@@ -136,6 +139,18 @@ export default function StatusPage() {
             >
               Retry
             </button>
+          </div>
+        )}
+
+        {showingCachedData && (
+          <div
+            aria-live="polite"
+            className="rounded-lg border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-slate-300"
+          >
+            Showing the last known status as of{" "}
+            {lastUpdated ? lastUpdated.toLocaleTimeString() : "an earlier check"}.
+            The connection could not be refreshed just now — this is not
+            necessarily the current state.
           </div>
         )}
 
