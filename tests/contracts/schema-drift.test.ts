@@ -49,7 +49,7 @@ describe("frontend API schema drift", () => {
     const healthFields = Object.keys(spec.components.schemas.HealthResponse.properties);
     for (const field of ["status", "service", "database", "timestamp"]) {
       expect(healthFields).toContain(field);
-      expect(successHealth[field]).toEqual(expect.any(String));
+      expect(successHealth[field as keyof typeof successHealth]).toEqual(expect.any(String));
     }
     const errorFields = spec.components.schemas.ApiError.required;
     for (const field of errorFields) {

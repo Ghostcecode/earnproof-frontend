@@ -1,18 +1,18 @@
 import { PageHeading } from "@/components/common/page-heading";
 import { pageContainer } from "@/components/common/production-ui";
-import { CreateProofFlow } from "@/components/proofs/create-proof-flow";
+import { RecurringIncomeProofWizard } from "@/components/proofs/recurring-income-proof-wizard";
 import { PublicShell } from "@/components/layout/public-shell";
 
-export default function CreateProofPage() {
+export default function RecurringIncomeProofPage() {
   return (
     <PublicShell>
       <section className={`${pageContainer} gap-8 sm:gap-10 sm:px-36 sm:py-16`}>
         <PageHeading
-          description="Connect a Stellar testnet wallet, sync incoming payments, select qualifying income, and create a signed minimum-income credential."
+          description="Configure recurring income intervals, select qualifying payments, and create a verifiable proof of regular income patterns with coverage analysis."
           eyebrow="Worker flow"
-          title="Create an income proof"
+          title="Create Recurring Income Proof"
         />
-        <CreateProofFlow />
+        <RecurringIncomeProofWizard />
       </section>
     </PublicShell>
   );

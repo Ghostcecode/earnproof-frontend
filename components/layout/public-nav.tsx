@@ -7,9 +7,10 @@ import { NetworkBadge } from "@/components/common/network-badge";
 
 const navItems = [
   { href: "/how-it-works", label: "Product" },
-  { href: "/proofs/create", label: "Proofs" },
+  { href: "/proofs", label: "Proofs" },
   { href: "/issuers", label: "Issuers" },
   { href: "/developers", label: "Developers" },
+  { href: "/settings", label: "Settings" },
 ];
 
 export function PublicNav() {
@@ -34,7 +35,9 @@ export function PublicNav() {
           {navItems.map((item) => (
             <Link
               className={
-                pathname === item.href || (item.href === "/proofs/create" && pathname.startsWith("/proofs"))
+                pathname === item.href || 
+                (item.href === "/proofs" && pathname.startsWith("/proofs")) ||
+                (item.href === "/settings" && pathname.startsWith("/settings"))
                   ? "font-medium text-cyan-200"
                   : "transition-colors hover:text-white"
               }
