@@ -18,9 +18,9 @@ jobs:
       - run: npm run lint
       - run: npm run test -- --runInBand
       - run: npm run test:contracts
+      - run: npm run check:doc-freshness
       - run: npm run build
 
-  accessibility:
   visual-regression:
     runs-on: ubuntu-latest
     steps:

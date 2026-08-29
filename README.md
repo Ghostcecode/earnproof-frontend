@@ -124,6 +124,12 @@ npm audit --omit=dev
 
 Cache-Control policy by route, API response caching, and stale/offline
 UI behavior are documented in [docs/cache-policy.md](docs/cache-policy.md).
+## Browser Support and Dependency Policy
+
+Supported browsers/devices, required feature fallbacks, dependency upgrade
+tiers, and emergency patch handling are documented in
+[docs/browser-support.md](docs/browser-support.md) and
+[docs/dependency-policy.md](docs/dependency-policy.md).
 ## Testing
 
 ```bash
@@ -149,6 +155,11 @@ manual screen-reader pass.
 - Do not expose full wallet history on verification pages.
 - Do not put secret keys or signing material in client code.
 - Keep public verification views limited to intentionally disclosed claim data.
+
+## Release Process
+
+Promoting a preview build to production, verifying it, and rolling it back
+if needed are covered in [docs/release-runbook.md](docs/release-runbook.md).
 
 ## Related Repositories
 
