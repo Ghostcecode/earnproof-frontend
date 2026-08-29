@@ -27,8 +27,11 @@ export class ApiMock {
   private readonly apiUrl: string;
   private verifyOutcome: keyof typeof SYNTHETIC_VERIFY_RESPONSES;
   private readonly expectedToken: string;
+  private proofCreationDelayMs = 0;
   authRequests: { walletAddress: string }[] = [];
   verifyRequests: string[] = [];
+  /** Every `Idempotency-Key` header seen on POST /proofs/minimum-income, in request order. */
+  proofCreationIdempotencyKeys: (string | undefined)[] = [];
 
   constructor(options: ApiMockOptions) {
     this.apiUrl = options.apiUrl.replace(/\/$/, "");
@@ -41,6 +44,14 @@ export class ApiMock {
    * exercise expired/revoked/unknown states without a second ApiMock. */
   setVerifyOutcome(outcome: keyof typeof SYNTHETIC_VERIFY_RESPONSES) {
     this.verifyOutcome = outcome;
+  }
+
+  /** Delay every POST /proofs/minimum-income response, to widen the window
+   * for a rapid-double-click / late-response-ordering test to land a
+   * second request while the first is still in flight, if the frontend's
+   * submission lock were not preventing it. */
+  setProofCreationDelay(ms: number) {
+    this.proofCreationDelayMs = ms;
   }
 
   async install(page: Page) {
@@ -106,6 +117,10 @@ export class ApiMock {
 
     if (path === "/proofs/minimum-income" && method === "POST") {
       if (!this.isAuthorized(route)) return this.json(route, 401, { error: "unauthorized" });
+      this.proofCreationIdempotencyKeys.push(request.headers()["idempotency-key"]);
+      if (this.proofCreationDelayMs > 0) {
+        await new Promise((resolve) => setTimeout(resolve, this.proofCreationDelayMs));
+      }
       return this.json(route, 201, SYNTHETIC_CREATE_PROOF_RESPONSE);
     }
 

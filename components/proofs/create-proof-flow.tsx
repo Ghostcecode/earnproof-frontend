@@ -7,6 +7,8 @@ import { PaymentListSkeleton } from "@/components/common/skeleton/payment-list-s
 import { appConfig } from "@/config/app";
 import { apiClient, bearer } from "@/lib/api/client";
 import { buildCredentialExport, buildVerificationLinkExport } from "@/lib/credentials/export";
+import { resolveIdempotencyKey, type IdempotencyState, type ProofIntent } from "@/lib/proofs/idempotency";
+import { createSubmissionGuard } from "@/lib/proofs/submission-guard";
 
 type SessionUser = {
   id: string;
@@ -64,9 +66,15 @@ export function CreateProofFlow() {
   const [proof, setProof] = useState<ProofResponse | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isSubmittingProof, setIsSubmittingProof] = useState(false);
   const errorRef = useRef<HTMLParagraphElement>(null);
   const connectButtonRef = useRef<HTMLButtonElement>(null);
   const wasConnectedRef = useRef(Boolean(initialSession?.user));
+  // Guards against duplicate proof-creation mutations: at most one active
+  // submission, and only the response belonging to that submission may
+  // update state. See lib/proofs/submission-guard.ts.
+  const submissionGuardRef = useRef(createSubmissionGuard());
+  const idempotencyRef = useRef<IdempotencyState | null>(null);
 
   useEffect(() => {
     if (error) {
@@ -232,35 +240,85 @@ export function CreateProofFlow() {
       return;
     }
 
+    // Reject a re-entrant call (a second click/Enter before the button's
+    // disabled state has re-rendered, or any other double-fire of this
+    // handler) instead of starting a second mutation. Only one submission
+    // may be active for this form at a time.
+    const submissionId = submissionGuardRef.current.begin();
+    if (submissionId === null) {
+      return;
+    }
+
+    setIsSubmittingProof(true);
     setError(null);
     setProof(null);
     setStatus("Creating signed minimum-income proof...");
+
+    const intent: ProofIntent = {
+      selectedPaymentIds: selectedIncomePayments.map((payment) => payment.id),
+      thresholdAmount,
+      assetCode: selectedIncomePayments[0].assetCode,
+      assetIssuer: selectedIncomePayments[0].assetIssuer ?? undefined,
+      periodStart: `${periodStart}T00:00:00.000Z`,
+      periodEnd: `${periodEnd}T23:59:59.000Z`,
+    };
+    // A retry of the same intent (same selection, threshold, and period)
+    // reuses the previous idempotency key; anything else mints a new one.
+    // See lib/proofs/idempotency.ts.
+    const idempotency = resolveIdempotencyKey(idempotencyRef.current, intent);
+    idempotencyRef.current = idempotency;
 
     try {
       const created = await apiClient<ProofResponse>({
         path: "/proofs/minimum-income",
         method: "POST",
-        headers: bearer(token),
+        headers: { ...bearer(token), "Idempotency-Key": idempotency.key },
         body: JSON.stringify({
-          selectedPaymentIds: selectedIncomePayments.map((payment) => payment.id),
-          thresholdAmount,
-          assetCode: selectedIncomePayments[0].assetCode,
-          assetIssuer: selectedIncomePayments[0].assetIssuer ?? undefined,
-          periodStart: `${periodStart}T00:00:00.000Z`,
-          periodEnd: `${periodEnd}T23:59:59.000Z`,
+          selectedPaymentIds: intent.selectedPaymentIds,
+          thresholdAmount: intent.thresholdAmount,
+          assetCode: intent.assetCode,
+          assetIssuer: intent.assetIssuer,
+          periodStart: intent.periodStart,
+          periodEnd: intent.periodEnd,
           expiresInDays: 30,
         }),
       });
 
+      // Drop this response if something (a wallet disconnect, most likely)
+      // invalidated this submission while the request was in flight — only
+      // the response belonging to the still-current submission may update
+      // success state.
+      if (!submissionGuardRef.current.isCurrent(submissionId)) {
+        return;
+      }
+
       setProof(created);
       setStatus("Proof created.");
+      // The intent this key covered has now succeeded; a future click,
+      // even with identical field values, is a new intent and should get
+      // its own key rather than silently reusing a completed one.
+      idempotencyRef.current = null;
     } catch {
+      if (!submissionGuardRef.current.isCurrent(submissionId)) {
+        return;
+      }
       setStatus(null);
       setError("Proof creation failed. Check the selected payments and try again.");
+    } finally {
+      submissionGuardRef.current.end(submissionId);
+      setIsSubmittingProof(false);
     }
   }
 
   function disconnect() {
+    // Any proof-creation request still in flight belongs to a session that
+    // no longer exists once the wallet is disconnected; invalidate it so
+    // its eventual response can't resurrect proof/error state for a user
+    // who has moved on, and so a fresh submit isn't stuck waiting on a
+    // request that may never resolve.
+    submissionGuardRef.current.invalidate();
+    idempotencyRef.current = null;
+    setIsSubmittingProof(false);
     window.localStorage.removeItem(SESSION_KEY);
     setToken(null);
     setUser(null);
@@ -396,11 +454,11 @@ export function CreateProofFlow() {
         </div>
         <button
           aria-describedby={error ? "create-proof-feedback" : undefined}
-          className="h-10 w-fit rounded-md bg-cyan-300 px-4 text-xs font-semibold text-slate-950 disabled:opacity-50"
-          disabled={!token || selectedIncomePayments.length === 0}
+          className="h-10 w-fit rounded-md bg-cyan-300 px-4 text-xs font-semibold text-slate-950 disabled:cursor-not-allowed disabled:opacity-50"
+          disabled={!token || selectedIncomePayments.length === 0 || isSubmittingProof}
           type="submit"
         >
-          Create proof
+          {isSubmittingProof ? "Creating proof..." : "Create proof"}
         </button>
       </form>
 
