@@ -6,6 +6,7 @@ import {
   VerificationPanel,
   VerifyProofResponse,
 } from "@/components/verification/verification-panel";
+import { VerifyResultSkeleton } from "@/components/common/skeleton/verify-result-skeleton";
 
 const MAX_FILE_BYTES = 32 * 1024; // 32 KB
 
@@ -186,7 +187,7 @@ export function VerifyCredentialForm() {
         </button>
       </form>
 
-      <VerificationPanel result={result} />
+      {isLoading ? <VerifyResultSkeleton /> : <VerificationPanel result={result} />}
     </div>
   );
 }

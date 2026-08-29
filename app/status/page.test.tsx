@@ -114,6 +114,15 @@ describe("StatusPage", () => {
     ).toBeInTheDocument();
   });
 
+  it("shows the loading skeleton before the first health check resolves", () => {
+    render(<StatusPage />);
+
+    const region = screen.getByRole("status");
+    expect(region).toHaveAttribute("aria-busy", "true");
+    expect(screen.getByText("Checking system status...")).toBeInTheDocument();
+    expect(screen.queryByText("EarnProof API")).not.toBeInTheDocument();
+  });
+
   it("renders live health data after fetch succeeds", async () => {
     render(<StatusPage />);
 
@@ -125,6 +134,7 @@ describe("StatusPage", () => {
     expect(screen.getByText("Database")).toBeInTheDocument();
     expect(screen.getAllByText("Global").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Just now").length).toBeGreaterThan(0);
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
   });
 
   it("shows error banner when fetch fails", async () => {

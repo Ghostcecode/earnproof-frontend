@@ -7,6 +7,7 @@ import {
   VerificationPanel,
   VerifyProofResponse,
 } from "@/components/verification/verification-panel";
+import { VerifyResultSkeleton } from "@/components/common/skeleton/verify-result-skeleton";
 import { extractProofId } from "@/lib/validation/proof-input";
 
 export function VerifyProofForm() {
@@ -103,7 +104,7 @@ export function VerifyProofForm() {
         </button>
       </form>
 
-      <VerificationPanel result={result} />
+      {isLoading ? <VerifyResultSkeleton /> : <VerificationPanel result={result} />}
     </div>
   );
 }
