@@ -149,14 +149,14 @@ export function VerifyCredentialForm() {
         <label className="grid gap-[7px] text-xs font-semibold text-slate-300">
           Network
           <input
-            className="h-[46px] rounded-lg border border-white/15 bg-transparent px-3 text-sm font-normal text-slate-500"
+            className="h-[46px] rounded-lg border border-white/15 bg-transparent px-3 text-sm font-normal text-slate-400"
             disabled
             value="Stellar Testnet"
           />
         </label>
 
         {/* Privacy info box — same copy and style as VerifyProofForm */}
-        <div className="rounded-lg border border-cyan-300/30 bg-cyan-300/10 p-3 text-sm leading-5">
+        <div className="rounded-lg border border-cyan-300/50 bg-cyan-300/10 p-3 text-sm leading-5">
           <p className="font-medium text-cyan-200">Privacy protected</p>
           <p className="mt-1.5 text-slate-300">
             Only the fields shown in the disclosure summary can be shared.

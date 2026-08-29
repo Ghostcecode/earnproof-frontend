@@ -129,7 +129,7 @@ export default function AccessibilityPage() {
               </p>
               <a 
                 href="mailto:accessibility@earnproof.com?subject=Accessibility%20Feedback"
-                className="inline-flex h-10 items-center justify-center rounded-lg border border-cyan-300/30 bg-cyan-300 px-6 text-sm font-medium text-slate-950 transition hover:bg-cyan-200"
+                className="inline-flex h-10 items-center justify-center rounded-lg border border-cyan-300/50 bg-cyan-300 px-6 text-sm font-medium text-slate-950 transition hover:bg-cyan-200"
               >
                 Send accessibility feedback
               </a>

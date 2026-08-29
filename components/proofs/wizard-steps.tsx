@@ -52,7 +52,7 @@ export function WizardSteps({
         };
       case "disabled":
         return {
-          button: "bg-slate-800 text-slate-500 cursor-not-allowed",
+          button: "bg-slate-800 text-slate-400 cursor-not-allowed",
           connector: "bg-slate-600",
         };
     }

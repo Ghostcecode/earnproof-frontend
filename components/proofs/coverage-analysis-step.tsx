@@ -34,7 +34,7 @@ export function CoverageAnalysisStep({
       </div>
 
       <div className="grid gap-6">
-        <div className="rounded-lg border border-cyan-300/30 bg-cyan-300/5 p-4">
+        <div className="rounded-lg border border-cyan-300/50 bg-cyan-300/5 p-4">
           <h3 className="text-sm font-semibold text-cyan-100">Configuration Summary</h3>
           <div className="mt-2 grid gap-1 text-sm text-cyan-200">
             <div><strong>Interval:</strong> Every {formatInterval(intervalUnit, intervalCount)}</div>
