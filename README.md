@@ -146,6 +146,11 @@ manual screen-reader pass.
 - Do not put secret keys or signing material in client code.
 - Keep public verification views limited to intentionally disclosed claim data.
 
+## Release Process
+
+Promoting a preview build to production, verifying it, and rolling it back
+if needed are covered in [docs/release-runbook.md](docs/release-runbook.md).
+
 ## Related Repositories
 
 - `earnproof-backend`: API, payment indexing, proof generation, credential signing, and verification.
