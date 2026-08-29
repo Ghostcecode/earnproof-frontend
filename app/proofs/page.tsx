@@ -1,6 +1,7 @@
 import { PageHeading } from "@/components/common/page-heading";
 import { pageContainer } from "@/components/common/production-ui";
 import { CreateProofFlow } from "@/components/proofs/create-proof-flow";
+import { ProofErrorBoundary } from "@/components/common/proof-error-boundary";
 import { PublicShell } from "@/components/layout/public-shell";
 import Link from "next/link";
 
@@ -54,7 +55,9 @@ export default function CreateProofPage() {
             </div>
           </Link>
         </div>
-        <CreateProofFlow />
+        <ProofErrorBoundary>
+          <CreateProofFlow />
+        </ProofErrorBoundary>
       </section>
     </PublicShell>
   );
