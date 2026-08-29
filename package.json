@@ -20,7 +20,8 @@
     "test:e2e:a11y:report": "playwright show-report",
     "test:e2e:visual": "playwright test --config=playwright.config.ts",
     "test:e2e:visual:update": "playwright test --config=playwright.config.ts --update-snapshots",
-    "perf:check": "node scripts/performance/check-budgets.js"
+    "perf:check": "node scripts/performance/check-budgets.js",
+    "check:doc-freshness": "node scripts/check-doc-freshness.js"
   },
   "dependencies": {
     "@stellar/freighter-api": "^6.0.1",

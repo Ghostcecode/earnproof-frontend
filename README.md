@@ -120,6 +120,12 @@ npm run build
 npm audit --omit=dev
 ```
 
+## Browser Support and Dependency Policy
+
+Supported browsers/devices, required feature fallbacks, dependency upgrade
+tiers, and emergency patch handling are documented in
+[docs/browser-support.md](docs/browser-support.md) and
+[docs/dependency-policy.md](docs/dependency-policy.md).
 ## Testing
 
 ```bash
