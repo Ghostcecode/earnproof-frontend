@@ -7,7 +7,7 @@ The goal is to keep state predictable, avoid unnecessary duplication,
 and ensure sensitive session data is not retained after logout.
 
 ---
-
+ 
 ## 1. Choosing the right state mechanism
 
 Use the smallest state mechanism that correctly represents the data.
@@ -74,3 +74,35 @@ export function readSession(): SessionState | null {
 export function clearSession() {
   localStorage.removeItem(SESSION_KEY);
 }
+
+
+
+
+---
+
+ # 3. Status and verification pages
+
+Verification/status pages should prefer TanStack Query for
+server-backed status.
+
+Typical lifecycle:
+
+route/input
+   ↓
+query key
+   ↓
+TanStack Query
+   ↓
+loading
+   ↓
+success / error
+
+
+Example:
+
+```ts
+const query = useQuery({
+  queryKey: ["verification", proofId],
+  queryFn: () => verifyProof(proofId),
+  enabled: Boolean(proofId),
+});
