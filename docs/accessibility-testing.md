@@ -163,3 +163,81 @@ Run with at least one of NVDA (Windows/Firefox or Chrome), VoiceOver
 Record findings from this checklist (route, issue, screen reader/browser
 combo) as GitHub issues tagged `accessibility` so they can be triaged
 against the automated gate above.
+
+## Manual contrast audit: status badges and cyan accents
+
+A manual WCAG 2.1 AA contrast audit of the status badge component
+(`StatusBadge` in `components/common/production-ui.tsx`, used on `/status`
+and throughout the proofs/verification flows) and the cyan accent colors
+defined in `app/globals.css` was carried out using the [WCAG 2.1
+relative-luminance contrast formula](https://www.w3.org/TR/WCAG21/#dfn-contrast-ratio)
+(the same algorithm `@axe-core/playwright` uses for its `color-contrast`
+rule), computed against this app's actual rendered colors — the
+`--background: #020617` page background and the `bg-white/[0.04]` panel
+surface most badges and bordered cards sit on. There is no
+`tailwind.config.ts` in this repo; Tailwind v4's CSS-based `@theme` config
+lives entirely in `app/globals.css`, so that file was the audit's only
+source of truth for color values.
+
+### Results
+
+| Element | Before | After | Requirement | Result |
+| --- | --- | --- | --- | --- |
+| `StatusBadge` text (`text-cyan-200`) on any tone's translucent fill | 13.7–13.9:1 | unchanged | 4.5:1 (normal text) | Pass (no change needed) |
+| Decorative/structural borders using `border-cyan-300/30` (badges, info panels, buttons, the skip link's focus-visible border) | 2.11:1 | 3.98:1 (`border-cyan-300/50`) | 3:1 (non-text UI component boundary, WCAG 1.4.11) | **Failed → fixed** |
+| Focus outline (`outline-color: #22d3ee` in `app/globals.css`, and `outline-cyan-300` utility) | 11.16:1 | unchanged | 3:1 (focus indicators, WCAG 1.4.11) | Pass (no change needed) |
+| Secondary/tertiary body text (`text-slate-500`, matches `--text-tertiary: #64748b`) rendered directly as content (labels, "Hidden from verifiers" copy, disabled-input values, "Coming soon" text) | 3.07–4.24:1 depending on surface | 5.71–7.87:1 (`text-slate-400`) | 4.5:1 (normal text, WCAG 1.4.3) | **Failed → fixed** |
+
+`text-slate-500` on `placeholder:` attributes (form input placeholders)
+was left unchanged: WCAG 1.4.3 applies to rendered text content, and
+placeholder text is conventionally treated as a UI hint rather than
+required reading — but it's worth a follow-up pass with a screen reader
+per item 1 of the manual checklist above, since some users do rely on it.
+
+### Fix applied
+
+- `border-cyan-300/30` → `border-cyan-300/50` everywhere it draws a
+  decorative or structural border (badges, bordered panels/buttons, the
+  skip link), in `app/error.tsx`, `app/not-found.tsx`,
+  `app/verify/[proofId]/page.tsx`, `app/faq/page.tsx`, `app/about/page.tsx`,
+  `app/accessibility/page.tsx`, `app/proof-types/page.tsx`,
+  `components/contact/contact-form.tsx`,
+  `components/proofs/artifact-export.tsx`,
+  `components/proofs/recurring-proof-confirmation.tsx`,
+  `components/proofs/coverage-analysis-step.tsx`,
+  `components/proofs/proof-confirmation.tsx`,
+  `components/proofs/period-config-step.tsx`,
+  `components/verification/verify-credential-form.tsx`,
+  `components/common/skip-link.tsx`,
+  `components/verification/verify-proof-form.tsx`,
+  `components/common/network-badge.tsx`, and
+  `components/common/production-ui.tsx` (the `StatusBadge` component
+  itself), plus the matching test assertion in
+  `app/proof-types/__tests__/page.test.tsx`.
+- `text-slate-500` → `text-slate-400` for rendered text content (not
+  placeholders) in `app/proof-types/page.tsx`,
+  `components/proofs/payment-selection.tsx`,
+  `components/proofs/proof-confirmation.tsx`,
+  `components/proofs/artifact-export.tsx`,
+  `components/proofs/wizard-steps.tsx`,
+  `components/verification/verify-proof-form.tsx`,
+  `components/verification/verify-credential-form.tsx`, and
+  `components/common/external-link.tsx`. `slate-400` was already the
+  established convention for this same purpose elsewhere in
+  `app/proof-types/page.tsx`, so this also removes an inconsistency
+  between two shades doing the same job.
+
+### Known follow-up (out of scope for this pass)
+
+The same 2:1–2.1:1 non-text-contrast shortfall exists on the `/30`-opacity
+borders used for amber/emerald/rose status alert boxes (warning/error/
+success panels) across roughly twenty files, e.g. `border-amber-300/30`,
+`border-emerald-300/30`, `border-rose-300/30` in
+`components/verification/verification-panel.tsx`,
+`components/organizations/organization-list.tsx`,
+`components/developers/api-key-list.tsx`, and others. This audit's scope
+was status badges and the cyan accent per the originating issue; the
+amber/emerald/rose alert borders should get the same `/30` → `/50`
+treatment in a dedicated follow-up so the whole alert-box family is
+consistent, rather than folding an unrelated ~20-file change into this
+pass.

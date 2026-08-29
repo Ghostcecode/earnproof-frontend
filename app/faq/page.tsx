@@ -140,7 +140,7 @@ export default function FAQPage() {
                   <span className="text-slate-300 capitalize">
                     {item.category}
                   </span>
-                  <span className="inline-flex h-7 w-fit items-center rounded-lg border border-cyan-300/30 bg-cyan-300/10 px-1.5 text-xs font-semibold uppercase leading-4 text-cyan-200">
+                  <span className="inline-flex h-7 w-fit items-center rounded-lg border border-cyan-300/50 bg-cyan-300/10 px-1.5 text-xs font-semibold uppercase leading-4 text-cyan-200">
                     Active
                   </span>
                 </article>

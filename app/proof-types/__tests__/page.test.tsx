@@ -101,13 +101,13 @@ describe("ProofTypesPage", () => {
     const tableButton = screen.getByText("Table");
     
     // Initially in cards view
-    expect(cardsButton).toHaveClass("border-cyan-300/30");
+    expect(cardsButton).toHaveClass("border-cyan-300/50");
     expect(cardsButton).toHaveClass("bg-cyan-300/10");
     expect(cardsButton).toHaveClass("text-cyan-200");
     
     // Switch to table view
     fireEvent.click(tableButton);
-    expect(tableButton).toHaveClass("border-cyan-300/30");
+    expect(tableButton).toHaveClass("border-cyan-300/50");
     expect(tableButton).toHaveClass("bg-cyan-300/10");
     expect(tableButton).toHaveClass("text-cyan-200");
     

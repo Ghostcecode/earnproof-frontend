@@ -45,7 +45,7 @@ export function RecurringProofConfirmation({
       </div>
 
       <div className="grid gap-6">
-        <div className="rounded-lg border border-cyan-300/30 bg-cyan-300/5 p-4">
+        <div className="rounded-lg border border-cyan-300/50 bg-cyan-300/5 p-4">
           <h3 className="text-lg font-semibold text-white">Proof Summary</h3>
           <dl className="mt-4 grid gap-3 text-sm">
             <div className="flex justify-between">

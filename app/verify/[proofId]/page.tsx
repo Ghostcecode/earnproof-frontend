@@ -96,7 +96,7 @@ function ErrorState({ error, onRetry }: { error: string; onRetry: () => void }) 
       <div className="flex flex-col sm:flex-row gap-3">
         <button
           onClick={onRetry}
-          className="inline-flex h-10 items-center justify-center rounded-lg border border-cyan-300/30 bg-cyan-300 px-6 text-sm font-medium text-slate-950 transition hover:bg-cyan-200"
+          className="inline-flex h-10 items-center justify-center rounded-lg border border-cyan-300/50 bg-cyan-300 px-6 text-sm font-medium text-slate-950 transition hover:bg-cyan-200"
         >
           Try again
         </button>
@@ -203,7 +203,7 @@ function VerificationResult({ result }: { result: VerifyProofResponse }) {
         </Link>
         <Link
           href="/proofs/create"
-          className="inline-flex h-10 items-center justify-center rounded-lg border border-cyan-300/30 bg-cyan-300 px-6 text-sm font-medium text-slate-950 transition hover:bg-cyan-200"
+          className="inline-flex h-10 items-center justify-center rounded-lg border border-cyan-300/50 bg-cyan-300 px-6 text-sm font-medium text-slate-950 transition hover:bg-cyan-200"
         >
           Create your own proof
         </Link>

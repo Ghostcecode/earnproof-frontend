@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import type { getAddress, requestAccess, signMessage } from "@stellar/freighter-api";
 import { ArtifactExport } from "@/components/proofs/artifact-export";
+import { PaymentListSkeleton } from "@/components/common/skeleton/payment-list-skeleton";
 import { appConfig } from "@/config/app";
 import { apiClient, bearer } from "@/lib/api/client";
 import { buildCredentialExport, buildVerificationLinkExport } from "@/lib/credentials/export";
@@ -55,6 +56,7 @@ export function CreateProofFlow() {
     () => initialSession?.user ?? null,
   );
   const [payments, setPayments] = useState<Payment[]>([]);
+  const [paymentsLoading, setPaymentsLoading] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
   const [thresholdAmount, setThresholdAmount] = useState("100");
   const [periodStart, setPeriodStart] = useState("2026-08-01");
@@ -159,6 +161,7 @@ export function CreateProofFlow() {
 
     setError(null);
     setStatus("Syncing incoming Stellar testnet payments...");
+    setPaymentsLoading(true);
 
     try {
       await apiClient({
@@ -171,6 +174,8 @@ export function CreateProofFlow() {
     } catch {
       setStatus(null);
       setError("Payment sync failed. Try again.");
+    } finally {
+      setPaymentsLoading(false);
     }
   }
 
@@ -179,6 +184,7 @@ export function CreateProofFlow() {
       return;
     }
 
+    setPaymentsLoading(true);
     try {
       const response = await apiClient<Payment[]>({
         path: "/payments",
@@ -187,6 +193,8 @@ export function CreateProofFlow() {
       setPayments(response);
     } catch {
       setError("Could not load payments. Try again.");
+    } finally {
+      setPaymentsLoading(false);
     }
   }
 
@@ -327,7 +335,9 @@ export function CreateProofFlow() {
         </div>
 
         <div className="grid gap-3">
-          {payments.length === 0 ? (
+          {paymentsLoading ? (
+            <PaymentListSkeleton />
+          ) : payments.length === 0 ? (
             <p className="rounded-md border border-white/10 bg-slate-950 p-4 text-sm text-slate-400">
               No payments loaded yet.
             </p>
