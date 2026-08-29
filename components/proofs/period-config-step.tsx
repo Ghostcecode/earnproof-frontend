@@ -77,7 +77,7 @@ export function PeriodConfigStep({
       </div>
 
       <div className="grid gap-6">
-        <div className="rounded-lg border border-cyan-300/30 bg-cyan-300/5 p-4">
+        <div className="rounded-lg border border-cyan-300/50 bg-cyan-300/5 p-4">
           <h3 className="text-sm font-semibold text-cyan-100">Selected Interval</h3>
           <p className="mt-1 text-sm text-cyan-200">
             Payments expected every <strong>{formatInterval(intervalUnit, intervalCount)}</strong>

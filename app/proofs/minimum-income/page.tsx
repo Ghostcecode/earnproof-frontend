@@ -1,6 +1,7 @@
 import { PageHeading } from "@/components/common/page-heading";
 import { pageContainer } from "@/components/common/production-ui";
 import { CreateProofFlow } from "@/components/proofs/create-proof-flow";
+import { ProofErrorBoundary } from "@/components/common/proof-error-boundary";
 import { PublicShell } from "@/components/layout/public-shell";
 
 export default function MinimumIncomeProofPage() {
@@ -12,7 +13,9 @@ export default function MinimumIncomeProofPage() {
           eyebrow="Worker flow"
           title="Create Minimum Income Proof"
         />
-        <CreateProofFlow />
+        <ProofErrorBoundary>
+          <CreateProofFlow />
+        </ProofErrorBoundary>
       </section>
     </PublicShell>
   );

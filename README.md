@@ -124,6 +124,21 @@ npm audit --omit=dev
 
 Cache-Control policy by route, API response caching, and stale/offline
 UI behavior are documented in [docs/cache-policy.md](docs/cache-policy.md).
+## Testing
+
+```bash
+npm run test           # component/unit tests (Jest + React Testing Library)
+npm run test:e2e       # end-to-end flows (Playwright)
+npm run test:e2e:a11y  # accessibility scans: axe + keyboard interaction (Playwright)
+```
+
+See [`docs/testing-guide.md`](./docs/testing-guide.md) for how tests are
+organized, how to mock the API client and Freighter, and what a new test
+should look like; [`tests/README.md`](./tests/README.md) for the
+top-level `tests/` directory specifically; and
+[`docs/accessibility-testing.md`](./docs/accessibility-testing.md) for
+what the automated accessibility gate covers and what still needs a
+manual screen-reader pass.
 
 ## Privacy and UX Requirements
 

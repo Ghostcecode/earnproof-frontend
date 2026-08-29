@@ -81,7 +81,7 @@ export function PaymentSelection({
             <p className="text-sm text-slate-400">
               No eligible payments found.
             </p>
-            <p className="mt-2 text-xs text-slate-500">
+            <p className="mt-2 text-xs text-slate-400">
               Sync your payments or ensure you have eligible payments that aren't excluded from proof creation.
             </p>
           </div>
@@ -198,7 +198,7 @@ function PaymentCard({
                   Eligible
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1 text-xs text-slate-500">
+                <span className="inline-flex items-center gap-1 text-xs text-slate-400">
                   <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L5.636 5.636" />
                   </svg>
