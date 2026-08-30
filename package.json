@@ -21,6 +21,11 @@
     "test:e2e:visual": "playwright test --config=playwright.config.ts",
     "test:e2e:visual:update": "playwright test --config=playwright.config.ts --update-snapshots",
     "perf:check": "node scripts/performance/check-budgets.js",
+    "validate:routes": "node scripts/generate-route-manifest.js",
+    "validate:links": "node scripts/validate-internal-links.js",
+    "validate:production": "node scripts/validate-production-readiness.js",
+    "audit:browser-apis": "node scripts/audit-browser-apis.js",
+    "validate:build": "npm run build && npm run validate:production"
     "check:doc-freshness": "node scripts/check-doc-freshness.js"
   },
   "dependencies": {
