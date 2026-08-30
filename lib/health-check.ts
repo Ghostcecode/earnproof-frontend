@@ -16,6 +16,13 @@ type HealthCheckState = {
   error: string | null;
   lastChecked: Date | null;
   lastUpdated: Date | null;
+  // False whenever `data` was carried over from a previous successful
+  // check rather than confirmed by the most recent one (the most recent
+  // check errored, e.g. offline or a timeout). The status page uses this
+  // to label what it's showing as "last known" rather than presenting
+  // stale service state as a live result. This is never true while
+  // `data` is null.
+  isDataLive: boolean;
 };
 
 const TIMEOUT_MS = 10_000;
@@ -48,6 +55,7 @@ export function useHealthCheck(pollIntervalMs = 30_000) {
     error: null,
     lastChecked: null,
     lastUpdated: null,
+    isDataLive: false,
   });
 
   const controllerRef = useRef<AbortController | null>(null);
@@ -60,6 +68,14 @@ export function useHealthCheck(pollIntervalMs = 30_000) {
     const controller = new AbortController();
     controllerRef.current = controller;
 
+    // A stale request's own completion (success or failure) must never be
+    // allowed to overwrite state a newer request already set. Every branch
+    // below checks this before calling setState, rather than relying on
+    // AbortController alone — abort() only guarantees the fetch signal
+    // fires; it does not guarantee every environment rejects the fetch
+    // promise before a competing response resolves.
+    const isCurrent = () => controllerRef.current === controller;
+
     setState((prev) => ({ ...prev, loading: true, error: null }));
 
     const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
@@ -67,6 +83,8 @@ export function useHealthCheck(pollIntervalMs = 30_000) {
     try {
       const res = await fetch(`${appConfig.apiUrl}/health`, {
         signal: controller.signal,
+        cache: "no-store",
+        headers: { "Cache-Control": "no-store" },
       });
 
       clearTimeout(timeoutId);
@@ -79,6 +97,10 @@ export function useHealthCheck(pollIntervalMs = 30_000) {
 
       if (isMalformed(body)) {
         throw new Error("Malformed response");
+      }
+
+      if (!isCurrent()) {
+        return;
       }
 
       const data = body as HealthResponse;
@@ -99,9 +121,14 @@ export function useHealthCheck(pollIntervalMs = 30_000) {
         error,
         lastChecked: now,
         lastUpdated: now,
+        isDataLive: true,
       });
     } catch (err: unknown) {
       clearTimeout(timeoutId);
+
+      if (!isCurrent()) {
+        return;
+      }
 
       if (controller.signal.aborted) {
         setState((prev) => ({
@@ -109,6 +136,7 @@ export function useHealthCheck(pollIntervalMs = 30_000) {
           loading: false,
           error: "Request timed out",
           lastChecked: new Date(),
+          isDataLive: false,
         }));
         return;
       }
@@ -121,6 +149,7 @@ export function useHealthCheck(pollIntervalMs = 30_000) {
         loading: false,
         error: message,
         lastChecked: new Date(),
+        isDataLive: false,
       }));
     }
   }, []);

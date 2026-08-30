@@ -20,9 +20,9 @@ jobs:
       - run: npm run test:contracts
       - run: npm run audit:browser-apis
       - run: npm run validate:production
+      - run: npm run check:doc-freshness
       - run: npm run build
 
-  accessibility:
   visual-regression:
     runs-on: ubuntu-latest
     steps:

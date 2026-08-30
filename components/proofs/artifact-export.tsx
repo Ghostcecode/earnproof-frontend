@@ -75,7 +75,7 @@ export function ArtifactExport({
         <div
           aria-labelledby={dialogId}
           aria-modal="true"
-          className="rounded-lg border border-cyan-300/30 bg-slate-950 p-4"
+          className="rounded-lg border border-cyan-300/50 bg-slate-950 p-4"
           role="dialog"
         >
           <h3 className="text-sm font-semibold text-white" id={dialogId}>
@@ -85,7 +85,7 @@ export function ArtifactExport({
             This file includes only fields returned by the public or owned EarnProof APIs.
             Filename: <span className="text-cyan-200">{plan.filename}</span>
           </p>
-          <p className="mt-3 text-xs font-semibold uppercase text-slate-500">Included fields</p>
+          <p className="mt-3 text-xs font-semibold uppercase text-slate-400">Included fields</p>
           <ul className="mt-1 grid gap-1 text-xs text-slate-300">
             {plan.includedFields.map((field) => (
               <li key={field}>{field}</li>

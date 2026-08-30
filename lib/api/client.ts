@@ -121,6 +121,21 @@ export async function apiClient<TResponse>({
   timeoutMs = DEFAULT_TIMEOUT_MS,
   ...init
 }: ApiClientOptions): Promise<TResponse> {
+  const response = await fetch(`${appConfig.apiUrl}${path}`, {
+    ...init,
+    // Every response through this client is either wallet-authenticated,
+    // payment/proof data, or a verification lookup — none of it is safe
+    // for Next.js's fetch data cache, a browser HTTP cache, or a shared
+    // intermediary cache to store or replay. `cache: "no-store"` opts the
+    // request itself out of Next's fetch cache; the explicit request
+    // header is a defense-in-depth signal for any caching proxy sitting in
+    // front of the API that respects request Cache-Control. See
+    // docs/cache-policy.md.
+    cache: "no-store",
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": "no-store",
+      ...headers,
   const response = await fetchWithTimeout(
     `${appConfig.apiUrl}${path}`,
     {

@@ -43,7 +43,7 @@ export function ProofConfirmation({
   };
 
   return (
-    <div className="rounded-lg border border-cyan-300/30 bg-cyan-300/5 p-4">
+    <div className="rounded-lg border border-cyan-300/50 bg-cyan-300/5 p-4">
       <h3 className="text-lg font-semibold text-white">Proof Preview</h3>
       <p className="mt-1 text-sm text-slate-300">
         Review what will be included in your payment receipt proof before creation.
@@ -95,7 +95,7 @@ export function ProofConfirmation({
                       <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 11-4.243-4.243m4.242 4.242L9.88 9.88" />
                     </svg>
                     <span className="text-xs text-emerald-200 font-medium">Private</span>
-                    <span className="text-xs text-slate-500">Hidden from verifiers</span>
+                    <span className="text-xs text-slate-400">Hidden from verifiers</span>
                   </>
                 )}
               </div>
@@ -119,7 +119,7 @@ export function ProofConfirmation({
                       <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 11-4.243-4.243m4.242 4.242L9.88 9.88" />
                     </svg>
                     <span className="text-xs text-emerald-200 font-medium">Private</span>
-                    <span className="text-xs text-slate-500">Hidden from verifiers</span>
+                    <span className="text-xs text-slate-400">Hidden from verifiers</span>
                   </>
                 )}
               </div>

@@ -120,6 +120,32 @@ npm run build
 npm audit --omit=dev
 ```
 
+## Cache Policy
+
+Cache-Control policy by route, API response caching, and stale/offline
+UI behavior are documented in [docs/cache-policy.md](docs/cache-policy.md).
+## Browser Support and Dependency Policy
+
+Supported browsers/devices, required feature fallbacks, dependency upgrade
+tiers, and emergency patch handling are documented in
+[docs/browser-support.md](docs/browser-support.md) and
+[docs/dependency-policy.md](docs/dependency-policy.md).
+## Testing
+
+```bash
+npm run test           # component/unit tests (Jest + React Testing Library)
+npm run test:e2e       # end-to-end flows (Playwright)
+npm run test:e2e:a11y  # accessibility scans: axe + keyboard interaction (Playwright)
+```
+
+See [`docs/testing-guide.md`](./docs/testing-guide.md) for how tests are
+organized, how to mock the API client and Freighter, and what a new test
+should look like; [`tests/README.md`](./tests/README.md) for the
+top-level `tests/` directory specifically; and
+[`docs/accessibility-testing.md`](./docs/accessibility-testing.md) for
+what the automated accessibility gate covers and what still needs a
+manual screen-reader pass.
+
 ## Privacy and UX Requirements
 
 - Show Stellar testnet status on relevant screens.
@@ -129,6 +155,11 @@ npm audit --omit=dev
 - Do not expose full wallet history on verification pages.
 - Do not put secret keys or signing material in client code.
 - Keep public verification views limited to intentionally disclosed claim data.
+
+## Release Process
+
+Promoting a preview build to production, verifying it, and rolling it back
+if needed are covered in [docs/release-runbook.md](docs/release-runbook.md).
 
 ## Related Repositories
 

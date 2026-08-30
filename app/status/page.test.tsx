@@ -114,6 +114,15 @@ describe("StatusPage", () => {
     ).toBeInTheDocument();
   });
 
+  it("shows the loading skeleton before the first health check resolves", () => {
+    render(<StatusPage />);
+
+    const region = screen.getByRole("status");
+    expect(region).toHaveAttribute("aria-busy", "true");
+    expect(screen.getByText("Checking system status...")).toBeInTheDocument();
+    expect(screen.queryByText("EarnProof API")).not.toBeInTheDocument();
+  });
+
   it("renders live health data after fetch succeeds", async () => {
     render(<StatusPage />);
 
@@ -125,6 +134,7 @@ describe("StatusPage", () => {
     expect(screen.getByText("Database")).toBeInTheDocument();
     expect(screen.getAllByText("Global").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Just now").length).toBeGreaterThan(0);
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
   });
 
   it("shows error banner when fetch fails", async () => {
@@ -194,6 +204,54 @@ describe("StatusPage", () => {
 
     await waitFor(() => {
       expect(screen.getAllByText("Active").length).toBeGreaterThan(0);
+    });
+  });
+
+  it("labels retained data as cached once a poll fails, then clears the label on recovery", async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => HEALTH_OK,
+    });
+
+    render(<StatusPage />);
+
+    await waitFor(() => {
+      expect(screen.getAllByText("Active").length).toBeGreaterThan(0);
+    });
+    expect(
+      screen.queryByText(/Showing the last known status/),
+    ).not.toBeInTheDocument();
+
+    (global.fetch as jest.Mock).mockRejectedValueOnce(
+      new TypeError("Failed to fetch"),
+    );
+
+    act(() => {
+      jest.advanceTimersByTime(30_000);
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/Showing the last known status/),
+      ).toBeInTheDocument();
+    });
+    // The service rows are still showing the previously fetched data, not
+    // wiped out by the failed poll.
+    expect(screen.getAllByText("Active").length).toBeGreaterThan(0);
+
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => HEALTH_OK,
+    });
+
+    act(() => {
+      jest.advanceTimersByTime(30_000);
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.queryByText(/Showing the last known status/),
+      ).not.toBeInTheDocument();
     });
   });
 

@@ -33,7 +33,7 @@ function ProofTypeCard({ proofType }: { proofType: ProofType }) {
             <ul className="space-y-1">
               {proofType.requirements.map((req, index) => (
                 <li key={index} className="flex items-start gap-2">
-                  <span className="text-slate-500 mt-1">•</span>
+                  <span className="text-slate-400 mt-1">•</span>
                   <span>{req}</span>
                 </li>
               ))}
@@ -56,14 +56,14 @@ function ProofTypeCard({ proofType }: { proofType: ProofType }) {
       {isAvailable ? (
         <Link 
           href="/proofs/create"
-          className="inline-flex h-10 w-full items-center justify-center rounded-lg border border-cyan-300/30 bg-cyan-300 px-6 text-sm font-medium text-slate-950 transition hover:bg-cyan-200"
+          className="inline-flex h-10 w-full items-center justify-center rounded-lg border border-cyan-300/50 bg-cyan-300 px-6 text-sm font-medium text-slate-950 transition hover:bg-cyan-200"
         >
           Create proof
         </Link>
       ) : (
         <button 
           disabled
-          className="inline-flex h-10 w-full items-center justify-center rounded-lg border border-slate-500/30 bg-slate-500/10 px-6 text-sm font-medium text-slate-500 cursor-not-allowed"
+          className="inline-flex h-10 w-full items-center justify-center rounded-lg border border-slate-400/30 bg-slate-400/10 px-6 text-sm font-medium text-slate-400 cursor-not-allowed"
         >
           Coming soon
         </button>
@@ -95,7 +95,7 @@ function ProofTypeRow({ proofType }: { proofType: ProofType }) {
             Create
           </Link>
         ) : (
-          <span className="text-sm text-slate-500">Coming soon</span>
+          <span className="text-sm text-slate-400">Coming soon</span>
         )}
       </div>
     </article>
@@ -159,7 +159,7 @@ export default function ProofTypesPage() {
                 onClick={() => setViewMode("cards")}
                 className={`h-10 px-4 text-sm font-medium rounded-lg border transition ${
                   viewMode === "cards"
-                    ? "border-cyan-300/30 bg-cyan-300/10 text-cyan-200"
+                    ? "border-cyan-300/50 bg-cyan-300/10 text-cyan-200"
                     : "border-white/15 text-slate-300 hover:bg-white/10"
                 }`}
               >
@@ -169,7 +169,7 @@ export default function ProofTypesPage() {
                 onClick={() => setViewMode("table")}
                 className={`h-10 px-4 text-sm font-medium rounded-lg border transition ${
                   viewMode === "table"
-                    ? "border-cyan-300/30 bg-cyan-300/10 text-cyan-200"
+                    ? "border-cyan-300/50 bg-cyan-300/10 text-cyan-200"
                     : "border-white/15 text-slate-300 hover:bg-white/10"
                 }`}
               >
