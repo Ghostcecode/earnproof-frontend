@@ -10,7 +10,7 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
       all: true,
-      include: ['components/verify/**/*Form.*', 'components/admin/**/*Form.*'],
+      include: ['components/**/*Form.*'],
       exclude: ['node_modules/', 'tests/'],
       thresholds: {
         statements: 70,
