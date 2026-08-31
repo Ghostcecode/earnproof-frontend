@@ -29,7 +29,7 @@ export function ExternalLink({ href, children, ...rest }: ExternalLinkProps) {
 
   if (!safe.ok) {
     return (
-      <span className="text-slate-500" data-blocked-url="true">
+      <span className="text-slate-400" data-blocked-url="true">
         {children}
       </span>
     );

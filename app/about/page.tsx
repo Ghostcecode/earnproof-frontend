@@ -23,7 +23,7 @@ export default function AboutPage() {
             Open infrastructure for portable, privacy-preserving financial evidence.
           </p>
           <Link
-            className="inline-flex h-11 items-center justify-center rounded-lg border border-cyan-300/30 bg-cyan-300 px-6 text-sm font-medium text-slate-950 transition hover:bg-cyan-200 sm:h-10"
+            className="inline-flex h-11 items-center justify-center rounded-lg border border-cyan-300/50 bg-cyan-300 px-6 text-sm font-medium text-slate-950 transition hover:bg-cyan-200 sm:h-10"
             href="/how-it-works"
           >
             Explore the protocol

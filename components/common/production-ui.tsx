@@ -18,7 +18,7 @@ export function MarketingHero({
       <StatusBadge>Open protocol</StatusBadge>
       <h2 className="text-2xl font-semibold leading-8 sm:text-4xl sm:font-bold sm:leading-10">{title}</h2>
       <p className="max-w-5xl text-lg leading-8 text-slate-300">{description}</p>
-      <Link className="inline-flex h-11 items-center justify-center rounded-lg border border-cyan-300/30 bg-cyan-300 px-6 text-sm font-medium text-slate-950 transition hover:bg-cyan-200 sm:h-10" href={href}>
+      <Link className="inline-flex h-11 items-center justify-center rounded-lg border border-cyan-300/50 bg-cyan-300 px-6 text-sm font-medium text-slate-950 transition hover:bg-cyan-200 sm:h-10" href={href}>
         {action}
       </Link>
     </section>
@@ -53,7 +53,7 @@ export function MetricGrid({ items }: { items: { value: string; label: string }[
 
 export function StatusBadge({ children, tone = "accent" }: { children: React.ReactNode; tone?: "accent" | "success" | "warning" }) {
   const toneClass = tone === "warning" ? "bg-amber-300/10" : tone === "success" ? "bg-emerald-300/10" : "bg-cyan-300/10";
-  return <span className={`inline-flex h-7 w-fit items-center rounded-lg border border-cyan-300/30 px-1.5 text-xs font-semibold uppercase leading-4 text-cyan-200 ${toneClass}`}>{children}</span>;
+  return <span className={`inline-flex h-7 w-fit items-center rounded-lg border border-cyan-300/50 px-1.5 text-xs font-semibold uppercase leading-4 text-cyan-200 ${toneClass}`}>{children}</span>;
 }
 
 type Row = { primary: string; secondary: string; tertiary: string; status: string; tone?: "success" | "warning" };

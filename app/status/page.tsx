@@ -3,6 +3,7 @@
 import { DataPanel, MetricGrid, StatusBadge, pageContainer } from "@/components/common/production-ui";
 import { PageHeading } from "@/components/common/page-heading";
 import { PublicShell } from "@/components/layout/public-shell";
+import { StatusCheckSkeleton } from "@/components/common/skeleton/status-check-skeleton";
 import { useHealthCheck } from "@/lib/health-check";
 
 type StatusRow = {
@@ -53,8 +54,11 @@ export default function StatusPage() {
     error,
     lastChecked,
     lastUpdated,
+    isDataLive,
     refetch,
   } = useHealthCheck();
+
+  const showingCachedData = data !== null && !isDataLive;
 
   const isOperational =
     data !== null &&
@@ -139,6 +143,18 @@ export default function StatusPage() {
           </div>
         )}
 
+        {showingCachedData && (
+          <div
+            aria-live="polite"
+            className="rounded-lg border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-slate-300"
+          >
+            Showing the last known status as of{" "}
+            {lastUpdated ? lastUpdated.toLocaleTimeString() : "an earlier check"}.
+            The connection could not be refreshed just now — this is not
+            necessarily the current state.
+          </div>
+        )}
+
         <MetricGrid
           items={[
             { value: metricValue, label: "Services online" },
@@ -168,6 +184,41 @@ export default function StatusPage() {
           rows={allRows}
           searchPlaceholder="Search services"
         />
+        {loading && !data ? (
+          <StatusCheckSkeleton rows={allRows.length} />
+        ) : (
+          <>
+            <MetricGrid
+              items={[
+                { value: metricValue, label: "Services online" },
+                {
+                  value: isOperational ? "0" : data ? "1" : "...",
+                  label: "Open incidents",
+                },
+                {
+                  value: isOperational ? "Up" : data ? "Degraded" : "...",
+                  label: "API status",
+                },
+              ]}
+            />
+
+            <div className="flex items-center gap-4 text-xs text-slate-400">
+              <span>Last checked: {formatRelative(lastChecked)}</span>
+              {lastUpdated && (
+                <span>
+                  API timestamp:{" "}
+                  {new Date(data?.timestamp ?? lastUpdated).toLocaleTimeString()}
+                </span>
+              )}
+            </div>
+
+            <DataPanel
+              headers={["Service", "Region", "Checked", "Status"]}
+              rows={allRows}
+              searchPlaceholder="Search services"
+            />
+          </>
+        )}
       </div>
     </PublicShell>
   );

@@ -283,7 +283,7 @@ export function ContactForm() {
         </div>
 
         {/* Info Banner */}
-        <div className="rounded-lg border border-cyan-300/30 bg-cyan-300/10 p-3">
+        <div className="rounded-lg border border-cyan-300/50 bg-cyan-300/10 p-3">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-200">
             How it works
           </p>
@@ -296,7 +296,7 @@ export function ContactForm() {
         {/* Submit Button */}
         <button
           type="submit"
-          className="inline-flex h-11 items-center justify-center rounded-lg border border-cyan-300/30 bg-cyan-300 px-6 text-sm font-medium text-slate-950 transition hover:bg-cyan-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+          className="inline-flex h-11 items-center justify-center rounded-lg border border-cyan-300/50 bg-cyan-300 px-6 text-sm font-medium text-slate-950 transition hover:bg-cyan-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
         >
           Send message
         </button>

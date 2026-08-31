@@ -38,7 +38,7 @@
     "module": "components/proofs/create-proof-flow.tsx",
     "schema": "ProofCreated",
     "required": ["proofId", "status", "verificationUrl", "credential"],
-    "routes": ["POST /proofs/minimum-income"]
+    "routes": ["POST /proofs/minimum-income", "POST /proofs/payment-receipt", "POST /proofs/recurring-income"]
   },
   {
     "module": "components/verification/verification-panel.tsx",
@@ -58,22 +58,28 @@
     "routes": ["GET /proofs/{id}/verify"]
   },
   {
-    "module": "app/issuers/page.tsx",
+    "module": "lib/api/issuers.ts",
     "schema": "Issuer",
     "required": ["id", "name", "status"],
-    "routes": ["GET /issuers", "GET /issuers/{id}"]
+    "routes": ["GET /issuers", "GET /issuers/{id}", "POST /issuers", "PATCH /issuers/{id}"]
   },
   {
-    "module": "lib/api/client.ts",
+    "module": "lib/api/organizations.ts",
     "schema": "Organization",
     "required": ["id", "name", "slug", "status"],
-    "routes": ["GET /organizations"]
+    "routes": ["GET /organizations", "GET /organizations/{id}", "POST /organizations", "PATCH /organizations/{id}"]
   },
   {
-    "module": "lib/api/client.ts",
+    "module": "lib/api/recurring-income-proofs.ts",
+    "schema": "RecurringIncomeProof",
+    "required": ["proofId", "status", "verificationUrl", "credential"],
+    "routes": ["POST /proofs/recurring-income", "POST /proofs/recurring-income/analyze-coverage"]
+  },
+  {
+    "module": "lib/api/keys.ts",
     "schema": "ApiKey",
     "required": ["id", "name", "prefix", "scopes"],
-    "routes": ["GET /api-keys"]
+    "routes": ["GET /api-keys", "POST /api-keys", "POST /api-keys/{id}/rotate", "DELETE /api-keys/{id}"]
   },
   {
     "module": "lib/api/client.ts",
