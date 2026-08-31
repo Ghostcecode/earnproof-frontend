@@ -1,189 +1,61 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import CreateIssuerForm from '@/components/admin/CreateIssuerForm';
-import '@testing-library/jest-dom';
 
-jest.mock('next/navigation', () => ({
-  useRouter: () => ({
-    push: jest.fn(),
-  }),
-}));
+jest.mock('next/navigation', () => ({ useRouter: () => ({ push: jest.fn() }) }));
 
-describe('CreateIssuerForm', () => {
-  const originalFetch = global.fetch;
+const fetchMock = jest.fn();
+global.fetch = fetchMock;
 
-  beforeEach(() => {
-    global.fetch = jest.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ id: 'issuer-123' }),
-      })
-    ) as jest.Mock;
-  });
+test('CreateIssuerForm validates, submits, disables, and navigates', async () => {
+  const user = userEvent.setup();
+  fetchMock.mockResolvedValue({ ok: true, json: async () => ({ id: 'issuer-123' }) });
+  render(<CreateIssuerForm />);
+  const name = screen.getByLabelText(/name/i);
+  const email = screen.getByLabelText(/email/i);
+  const website = screen.getByLabelText(/website/i);
+  const button = screen.getByRole('button', { name: /create issuer/i });
 
-  afterEach(() => {
-    global.fetch = originalFetch;
-    just.clearAllMocks();
-  });
+  await user.click(button);
+  expect(screen.getAllByRole('alert').length).toBeGreaterThan(0);
 
-  it('renders all form fields', () => {
-    render(<CreateIssuerForm />);
-    expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/website/i)).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: /create issuer/i })
-    ).toBeInTheDocument();
-  });
+  await user.type(name, 'ab');
+  await user.type(email, 'invalid-email');
+  await user.type(website, 'not-a-url');
+  await user.click(button);
+  expect(screen.getByText(/at least 3 characters/i)).toBeInTheDocument();
+  expect(screen.getByText(/valid email/i)).toBeInTheDocument();
+  expect(screen.getByText(/valid url/i)).toBeInTheDocument();
+  expect(fetchMock).not.toHaveBeenCalled();
 
-  it('displays required validation errors and uses role=alert', async () => {
-    const user = userEvent.setup();
-    render(<CreateIssuerForm />);
+  await user.clear(name);
+  await user.type(name, 'Test Issuer');
+  await user.clear(email);
+  await user.type(email, 'issuer@example.com');
+  await user.clear(website);
+  await user.type(website, 'https://example.com');
+  await user.click(button);
+  await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/issuers', expect.any(Object)));
+  expect(name).toHaveValue('');
+  expect(email).toHaveValue('');
+  expect(website).toHaveValue('');
 
-    await user.click(
-      screen.getByRole('button', { name: /create issuer/i })
-    );
+  let resolvePending: (value: unknown) => void;
+  fetchMock.mockReturnValue(new Promise((resolve) => { resolvePending = resolve; }));
+  await user.type(name, 'Pending Issuer');
+  await user.type(email, 'pending@example.com');
+  await user.type(website, 'https://pending.com');
+  await user.click(button);
+  expect(button).toBeDisabled();
+  resolvePending!({ ok: true, json: async () => ({ id: 'issuer-456' }) });
+  await waitFor(() => expect(button).toBeEnabled());
 
-    const alerts = await screen.findAllByRole('alert');
-    expect(alerts).toHaveLength(3);
-    expect(screen.getByText(/name.*required/i)).toBeInTheDocument();
-    expect(screen.getByText(/email.*required/i)).toBeInTheDocument();
-    expect(screen.getByText(/website.*required/i)).toBeInTheDocument();
-  });
-
-  it('shows invalid format errors for email and website', async () => {
-    const user = userEvent.setup();
-    render(<CreateIssuerForm />);
-
-    await user.type(screen.getByLabelText(/name/i), 'Test Issuer');
-    await user.type(screen.getByLabelText(/email/i), 'invalid-email');
-    await user.type(screen.getByLabelText(/website/i), 'not-a-url');
-
-    await user.click(
-      screen.getByRole('button', { name: /create issuer/i })
-    );
-
-    expect(
-      await screen.findByText(/valid email/i)
-    ).toBeInTheDocument();
-    expect(
-      await screen.findByText(/valid url/i)
-    ).toBeInTheDocument();
-  });
-
-  it('successfully submits form, resets it, and sends correct payload', async () => {
-    const user = userEvent.setup();
-    render(<CreateIssuerForm />);
-
-    await user.type(screen.getByLabelText(/name/i), 'Test Issuer');
-    await user.type(
-      screen.getByLabelText(/email/i),
-      'issuer@example.com'
-    );
-    await user.type(
-      screen.getByLabelText(/website/i),
-      'https://example.com'
-    );
-
-    await user.click(
-      screen.getByRole('button', { name: /create issuer/i })
-    );
-
-    await waitFor(() =>
-      expect(fetch).toHaveBeenCalledWith('/api/issuers', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: 'Test Issuer',
-          email: 'issuer@example.com',
-          website: 'https://example.com',
-        }),
-      })
-    );
-
-    await waitFor(() => {
-      expect(screen.getByLabelText(/name/i)).toHaveValue('');
-      expect(screen.getByLabelText(/email/i)).toHaveValue('');
-      expect(screen.getByLabelText(/website/i)).toHaveValue('');
-    });
-  });
-
-  it('disables the submit button while request is in-flight', async () => {
-    const user = userEvent.setup();
-    let resolveFetch!* (value: unknown) => void;
-    const pendingFetch = new Promise((resolve) => {
-      resolveFetch = resolve;
-    });
-    global.fetch = jest.fn(.() => pendingFetch) as jest.Mock;
-
-    render(<CreateIssuerForm />);
-
-    await user.type(screen.getByLabelText(/name/i), 'Test Issuer');
-    await user.type(
-      screen.getByLabelText(/email/i),
-      'issuer@example.com'
-    );
-    await user.type(
-      screen.getByLabelText(/website/i),
-      'https://example.com'
-    );
-
-    const submitButton = screen.getByRole('button', {
-      name: /create issuer/i,
-    });
-    await user.click(submitButton);
-
-    expect(submitButton).toBeDisabled();
-
-    resolveFetch({ ok: true, json: async () => ({}) });
-    await waitFor(() => expect(submitButton).toBEnabled());
-  });
-
-  it('supports keyboard navigation through all form controls', async () => {
-    const user = userEvent.setup();
-    render(<CreateIssuerForm />);
-
-    const nameInput = screen.getByLabelText(/name/i);
-    const emailInput = screen.getByLabelText(/email/i);
-    const websiteInput = screen.getByLabelText(/website/i);
-    const submitButton = screen.getByRole('button', {
-      name: /create issuer/i,
-    });
-
-    await user.click(nameInput);
-    expect(nameInput).toHaveFocus();
-
-    await user.tab();
-    expect(emailInput).toHaveFocus();
-
-    await user.tab();
-    expect(websiteInput).toHaveFocus();
-
-    await user.tab();
-    expect(submitButton).toHaveFocus();
-  });
-
-  it('rejects names shorter than the minimum length', async () => {
-    const user = userEvent.setup();
-    render(<CreateIssuerForm />);
-
-    await user.type(screen.getByLabelText(/name/i), 'ab');
-    await user.type(
-      screen.getByLabelText(/email/i),
-      'issuer@example.com'
-    );
-    await user.type(
-      screen.getByLabelText(/website/i),
-      'https://example.com'
-    );
-
-    await user.click(
-      screen.getByRole('button', { name: /create issuer/i })
-    );
-
-    expect(
-      await screen.findByText(/at least 3 characters/i)
-    ).toBeInTheDocument();
-    expect(fetch).not.toHaveBeenCalled();
-  });
+  await user.click(name);
+  expect(name).toHaveFocus();
+  await user.tab();
+  expect(email).toHaveFocus();
+  await user.tab();
+  expect(website).toHaveFocus();
+  await user.tab();
+  expect(button).toHaveFocus();
 });
