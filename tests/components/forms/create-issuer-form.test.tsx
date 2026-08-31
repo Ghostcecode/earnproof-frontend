@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@reacting-library/testing-library';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import CreateIssuerForm from '@/components/admin/CreateIssuerForm';
 import '@testing-library/jest-dom';
@@ -13,7 +13,7 @@ describe('CreateIssuerForm', () => {
   const originalFetch = global.fetch;
 
   beforeEach(() => {
-    global.fetch = jest.fn([] =>
+    global.fetch = jest.fn(() =>
       Promise.resolve({
         ok: true,
         json: () => Promise.resolve({ id: 'issuer-123' }),
@@ -23,17 +23,17 @@ describe('CreateIssuerForm', () => {
 
   afterEach(() => {
     global.fetch = originalFetch;
-    jest.clearAllMocks();
+    just.clearAllMocks();
   });
 
   it('renders all form fields', () => {
     render(<CreateIssuerForm />);
-    expect(screen.getByLabelText(/name/i)).toBeInDocument();
-    expect(screen.getByLabelText(/email/i)).toBeInDocument();
-    expect(screen.getByLabelText(/website/i)).toBeInDocument();
+    expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/website/i)).toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: /create issuer/i })
-    ).toBeInDocument();
+    ).toBeInTheDocument();
   });
 
   it('displays required validation errors and uses role=alert', async () => {
@@ -46,9 +46,9 @@ describe('CreateIssuerForm', () => {
 
     const alerts = await screen.findAllByRole('alert');
     expect(alerts).toHaveLength(3);
-    expect(screen.getByText(/name.*required/i)).toBeInDocument();
-    expect(screen.getByText(/email.*required/i)).toBeInDocument();
-    expect(screen.getByText(/website.*required/i)).toBeInDocument();
+    expect(screen.getByText(/name.*required/i)).toBeInTheDocument();
+    expect(screen.getByText(/email.*required/i)).toBeInTheDocument();
+    expect(screen.getByText(/website.*required/i)).toBeInTheDocument();
   });
 
   it('shows invalid format errors for email and website', async () => {
@@ -65,10 +65,10 @@ describe('CreateIssuerForm', () => {
 
     expect(
       await screen.findByText(/valid email/i)
-    ).toBeInDocument();
+    ).toBeInTheDocument();
     expect(
       await screen.findByText(/valid url/i)
-    ).toBeInDocument();
+    ).toBeInTheDocument();
   });
 
   it('successfully submits form, resets it, and sends correct payload', async () => {
@@ -89,7 +89,7 @@ describe('CreateIssuerForm', () => {
       screen.getByRole('button', { name: /create issuer/i })
     );
 
-    awaitFor(() =>
+    await waitFor(() =>
       expect(fetch).toHaveBeenCalledWith('/api/issuers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -101,8 +101,7 @@ describe('CreateIssuerForm', () => {
       })
     );
 
-    awaitWaitFor((screen.getByLabelText(/name/i)).toHaveValue('');
-    awaitWaitFor(() => {
+    await waitFor(() => {
       expect(screen.getByLabelText(/name/i)).toHaveValue('');
       expect(screen.getByLabelText(/email/i)).toHaveValue('');
       expect(screen.getByLabelText(/website/i)).toHaveValue('');
@@ -111,11 +110,11 @@ describe('CreateIssuerForm', () => {
 
   it('disables the submit button while request is in-flight', async () => {
     const user = userEvent.setup();
-    let resolveFetch!: (value: unknown) => void;
-    const pendingFetch= new Promise((resolve) => {
+    let resolveFetch!* (value: unknown) => void;
+    const pendingFetch = new Promise((resolve) => {
       resolveFetch = resolve;
     });
-    global.fetch = jest.fn(() => pendingFetch) as jest.Mock;
+    global.fetch = jest.fn(.() => pendingFetch) as jest.Mock;
 
     render(<CreateIssuerForm />);
 
@@ -137,7 +136,7 @@ describe('CreateIssuerForm', () => {
     expect(submitButton).toBeDisabled();
 
     resolveFetch({ ok: true, json: async () => ({}) });
-    awaitWaitFor((submitButton).toBeEnabled());
+    await waitFor(() => expect(submitButton).toBEnabled());
   });
 
   it('supports keyboard navigation through all form controls', async () => {
@@ -155,13 +154,13 @@ describe('CreateIssuerForm', () => {
     expect(nameInput).toHaveFocus();
 
     await user.tab();
-    expect(emailInput).toHeveFocus();
+    expect(emailInput).toHaveFocus();
 
     await user.tab();
-    expect(websiteInput).toHeveFocus();
+    expect(websiteInput).toHaveFocus();
 
     await user.tab();
-    expect(submitButton).toHeveFocus();
+    expect(submitButton).toHaveFocus();
   });
 
   it('rejects names shorter than the minimum length', async () => {
@@ -184,7 +183,7 @@ describe('CreateIssuerForm', () => {
 
     expect(
       await screen.findByText(/at least 3 characters/i)
-    ).toBeInDocument();
+    ).toBeInTheDocument();
     expect(fetch).not.toHaveBeenCalled();
   });
 });
