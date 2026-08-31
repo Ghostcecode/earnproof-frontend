@@ -14,11 +14,13 @@ const MOCK_API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:4010/a
 
 export default defineConfig({
   testDir: "./e2e",
-  // The visual regression suite lives under e2e/visual but has its own
-  // dedicated config (playwright.visual.config.ts) with different project
-  // names/viewports and baseline snapshots — exclude it here so it isn't
-  // also picked up (and run under the wrong projects) by this config.
-  testIgnore: "**/visual/**",
+  // The accessibility suite lives under e2e/accessibility and the visual
+  // regression suite lives under e2e/visual, each with its own dedicated
+  // config (playwright.a11y.config.ts / playwright.visual.config.ts) using
+  // different projects, worker counts, and thresholds — exclude both here
+  // so they aren't also picked up (and run under the wrong settings) by
+  // this general functional e2e config.
+  testIgnore: ["**/visual/**", "**/accessibility/**"],
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,

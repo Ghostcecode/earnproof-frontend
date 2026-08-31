@@ -16,7 +16,7 @@
     "generate:api-types": "node scripts/generate-api-types/index.js",
     "test:contracts": "node scripts/check-api-drift.js && node scripts/generate-api-types/index.js --check",
     "test:e2e": "playwright test",
-    "test:e2e:a11y": "playwright test",
+    "test:e2e:a11y": "playwright test --config=playwright.a11y.config.ts",
     "test:e2e:a11y:report": "playwright show-report",
     "test:e2e:visual": "playwright test --config=playwright.config.ts",
     "test:e2e:visual:update": "playwright test --config=playwright.config.ts --update-snapshots",
